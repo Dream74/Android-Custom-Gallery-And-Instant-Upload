@@ -27,6 +27,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.CursorLoader;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
@@ -91,7 +92,7 @@ public class UploadQueue extends Activity {
 		
 		PhotoId = getIntent().getStringExtra("photoId");
 		
-		queueAdapter = new QueueAdapter();
+		queueAdapter = new QueueAdapter(this);
 		String ids = getIntent().getStringExtra("Ids");
 		queueAdapter.initialize(ids);
 		UploadList = (ListView) findViewById(R.id.UploadList);
@@ -110,8 +111,10 @@ public class UploadQueue extends Activity {
 	public class QueueAdapter extends BaseAdapter {
 		private LayoutInflater mInflater;
 		public ArrayList<QueueItem> queueItems = new ArrayList<QueueItem>();
+		private final Activity activity ;
 
-		public QueueAdapter() {
+		public QueueAdapter(Activity activity) {
+			this.activity = activity; 
 			mInflater = (LayoutInflater) getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 		}
 
@@ -125,10 +128,9 @@ public class UploadQueue extends Activity {
 				
 				final String[] columns = { MediaStore.Images.Media.DATA };
 				final String orderBy = MediaStore.Images.Media._ID;
-				Cursor imagecursor = managedQuery(
-						MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns,
-						MediaStore.Images.Media._ID + " = " + queueItem.media_id + "", null,
-						orderBy);
+				CursorLoader cursorloader = new CursorLoader(activity.getApplicationContext(),MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, MediaStore.Images.Media._ID + " = " + queueItem.media_id + "", null, orderBy) ;
+				Cursor imagecursor = cursorloader.loadInBackground() ;
+				
 				int count = imagecursor.getCount();
 				for (int i = 0; i < count; i++) {
 					imagecursor.moveToPosition(i);
@@ -182,10 +184,9 @@ public class UploadQueue extends Activity {
 			QueueItem item = getItem(position);
 			final String[] columns = { MediaStore.Images.Media.DATA };
 			final String orderBy = MediaStore.Images.Media._ID;
-			Cursor imagecursor = managedQuery(
-					MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns,
-					MediaStore.Images.Media._ID + " = " + item.media_id + "", null,
-					orderBy);
+
+			CursorLoader cursorloader = new CursorLoader(activity.getApplicationContext(),MediaStore.Images.Media.EXTERNAL_CONTENT_URI, columns, MediaStore.Images.Media._ID + " = " + item.media_id + "", null, orderBy) ;
+			Cursor imagecursor = cursorloader.loadInBackground() ;
 			int count = imagecursor.getCount();
 			for (int i = 0; i < count; i++) {
 				imagecursor.moveToPosition(i);

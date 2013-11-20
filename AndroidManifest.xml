@@ -5,7 +5,7 @@
 	<uses-sdk android:minSdkVersion="9" />
 
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
-		<activity android:name=".AndroidCustomGalleryActivity"
+		<activity android:name="com.isummation.customgallery.AndroidCustomGalleryActivity"
 			android:label="@string/app_name" android:configChanges="keyboardHidden|orientation">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
